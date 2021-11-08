@@ -1,2 +1,2 @@
 # canteenmenu
-NSIER canteen menu
+NISER canteen menu

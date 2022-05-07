@@ -1,4 +1,5 @@
-var csvLink = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSpgPFjsVbVak8MuXxOYEV8ezmsXC38Ki13xHcGwVt3YbFRoRSKwiRemMk9lCGOKRsDCrlYtD2ePg7V/pub?output=csv';
+var csvLink = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpgPFjsVbVak8MuXxOYEV8ezmsXC38Ki13xHcGwVt3YbFRoRSKwiRemMk9lCGOKRsDCrlYtD2ePg7V/pub?output=csv";
+var kaveri_form_link = "https://docs.google.com/forms/d/e/1FAIpQLSerO8nzg2LGAQbuBf4Eoz_te1oJZ8Qkzo_zXc1cYswwQ0oh1g/viewform?usp=sf_link";
 var request;
 if (window.XMLHttpRequest) {
     request = new XMLHttpRequest();
@@ -7,7 +8,7 @@ else {
     request = new ActiveXObject("Microsoft.XMLHTTP");
 }
 var loading = true;
-request.open('GET', csvLink, true);
+request.open("GET", csvLink, true);
 request.send();
 request.onload = function (e) {
     if (request.readyState === 4) {
@@ -52,32 +53,31 @@ function CSVtoArray(text) {
             a.push(m2.replace(/\\"/g, '"'));
         else if (m3 !== undefined)
             a.push(m3);
-        return ''; // Return empty string.
+        return ""; // Return empty string.
     });
     // Handle special case of empty last value.
     if (/,\s*$/.test(text))
-        a.push('');
+        a.push("");
     return a;
 }
-;
 function make_date_friendly(date) {
     var now = new Date();
     var today = (now.getMonth() + 1).toString() +
-        '/' +
+        "/" +
         now.getDate().toString() +
-        '/' +
+        "/" +
         now.getFullYear().toString();
     now.setDate(now.getDate() - 1); // going a day back
     var yesterday = (now.getMonth() + 1).toString() +
-        '/' +
+        "/" +
         now.getDate().toString() +
-        '/' +
+        "/" +
         now.getFullYear().toString();
     if (date == today) {
-        return 'Today';
+        return "Today";
     }
     else if (date == yesterday) {
-        return 'Yesterday';
+        return "Yesterday";
     }
     return date;
 }
@@ -86,17 +86,31 @@ function addCanteen(time, canteen, meals) {
         document.querySelector("#skeleton").classList.add("hide");
         loading = false;
     }
-    var sections = document.getElementsByTagName('section');
+    var sections = document.getElementsByTagName("section");
     for (var section in sections) {
-        if (typeof sections[section] == 'object') {
-            sections[section].innerHTML +=
-                '<div class=canteen-card><span class=canteen-name>' +
-                    canteen +
-                    '</span><br /><span class=timestamp>' +
-                    time +
-                    '</span><br /><br/><span class=menu>' +
-                    meals[section] +
-                    '</span></div>';
+        if (typeof sections[section] == "object") {
+            if (canteen == "Kaveri") {
+                sections[section].innerHTML +=
+                    "<div class=canteen-card><div class=card-head><span class=canteen-name>" +
+                        canteen +
+                        "</span><a class=feedback href='" +
+                        kaveri_form_link +
+                        "' target=__blank>Feedback</a></div><span class=timestamp>" +
+                        time +
+                        "</span><br /><br/><span class=menu>" +
+                        meals[section] +
+                        "</span></div>";
+            }
+            else {
+                sections[section].innerHTML +=
+                    "<div class=canteen-card><span class=canteen-name>" +
+                        canteen +
+                        "</span><br /><span class=timestamp>" +
+                        time +
+                        "</span><br /><br/><span class=menu>" +
+                        meals[section] +
+                        "</span></div>";
+            }
         }
     }
 }
@@ -104,7 +118,7 @@ function addCanteen(time, canteen, meals) {
 function move() {
     var hours = new Date().getHours();
     var section_no = 0;
-    var sections = document.getElementsByTagName('section');
+    var sections = document.getElementsByTagName("section");
     if (hours >= 22 || hours < 10) {
         // breakfast case
     }
@@ -120,11 +134,11 @@ function move() {
         // dinner case
         section_no = 3;
     }
-    var location = '-' + section_no.toString() + '00vw';
-    sections[0].style['margin-left'] = location;
-    sections[1].style['margin-left'] = location;
-    sections[2].style['margin-left'] = location;
-    sections[3].style['margin-left'] = location;
+    var location = "-" + section_no.toString() + "00vw";
+    sections[0].style["margin-left"] = location;
+    sections[1].style["margin-left"] = location;
+    sections[2].style["margin-left"] = location;
+    sections[3].style["margin-left"] = location;
 }
 // function to reload on appropriate times
 function setToReload() {

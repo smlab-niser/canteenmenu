@@ -399,6 +399,13 @@ header {
   -ms-scroll-snap-type: x mandatory;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
+
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+}
+
+.swipe-view::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, and Opera */
 }
 
 section {

@@ -6,9 +6,9 @@ function construct_menu(defaultItems, specialItems) {
     const defaultItemsString = defaultItems.join(', ');
     const specialItemsString = specialItems.join(', ');
     return `
-    <b>Default Items:</b> ${defaultItemsString}
+    <b>Common Items:</b> ${defaultItemsString}
     <br>
-    <b>Special Items:</b> ${specialItemsString}
+    <b>Today's Items:</b> ${specialItemsString}
     `;
 };
 

@@ -124,14 +124,6 @@ function isDateToday(dateString) {
     );
 }
 
-// function to check if the email is valid
-function isEmailValid(email) {
-    return (
-        (email === "code@niser.ac.in") || // Exact match
-        (email.startsWith("hec.") && email.endsWith("@niser.ac.in"))
-    );
-}
-
 // takes input a line from the csv file and returns an array of the values
 // remember to not put the whole csv file in this function, put only one line at a time
 function CSVtoArray(text) {
@@ -218,7 +210,7 @@ function get_notes() {
                 lunch = line[4];
                 snacks = line[5];
                 dinner = line[6];
-                if (isDateToday(timestamp) && isEmailValid(email)) {
+                if (isDateToday(timestamp)) {
                     notes[hostel] = {
                         "breakfast": breakfast,
                         "lunch": lunch,

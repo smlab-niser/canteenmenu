@@ -159,7 +159,7 @@ function CSVtoArray(text) {
 }
 
 function get_spl_items() {
-    spl_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAIvrI0n7Ykze7ARIWGSu4f_DcVwZEx62VKATD08uLnGD4YJ9GYM79exqGVEytKsxTn3rm9u8ERhJG/pub?gid=620864255&single=true&output=csv"
+    spl_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAIvrI0n7Ykze7ARIWGSu4f_DcVwZEx62VKATD08uLnGD4YJ9GYM79exqGVEytKsxTn3rm9u8ERhJG/pub?gid=1270076622&single=true&output=csv"
     return fetch(spl_url)
         .then((response) => {
             if (!response.ok) {
@@ -195,7 +195,7 @@ function get_spl_items() {
 }
 
 function get_notes() {
-    spl_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ5xfG2JM4qoQddDVT_6KAa-N9823amzU4uncd4y7z5xzkwP101DyGxea7MtaMLRo05TAdwauHPgYff/pub?gid=1163587093&single=true&output=csv"
+    spl_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ5xfG2JM4qoQddDVT_6KAa-N9823amzU4uncd4y7z5xzkwP101DyGxea7MtaMLRo05TAdwauHPgYff/pub?gid=399925005&single=true&output=csv"
     return fetch(spl_url)
         .then((response) => {
             if (!response.ok) {

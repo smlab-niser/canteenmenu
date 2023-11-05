@@ -206,18 +206,18 @@ function get_notes() {
         .then((csvData) => {
             lines = csvData.split('\n');
             // console.log(lines);
-            lines.shift();  // Timestamp, Canteen, Breakfast, Lunch, Snacks, Dinner, Email
+            lines.shift();  // Timestamp, Email, Canteen, Breakfast, Lunch, Snacks, Dinner
             // console.log(lines);
             notes = {};
             lines.forEach(line => {
                 line = CSVtoArray(line);
                 timestamp = line[0];
-                hostel = line[1];
-                breakfast = line[2];
-                lunch = line[3];
-                snacks = line[4];
-                dinner = line[5];
-                email = line[6];
+                email = line[1];
+                hostel = line[2];
+                breakfast = line[3];
+                lunch = line[4];
+                snacks = line[5];
+                dinner = line[6];
                 if (isDateToday(timestamp) && isEmailValid(email)) {
                     notes[hostel] = {
                         "breakfast": breakfast,

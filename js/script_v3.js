@@ -2,8 +2,8 @@ const d = new Date();
 let day = d.getDay();
 let hours = d.getHours();
 
-function construct_menu(commonItems, todaysItems, specialItem, note) {
-    const commonItemsString = commonItems.join(', ');
+function construct_menu(todaysItems, specialItem, note) {
+    // const commonItemsString = commonItems.join(', ');
     const todaysItemsString = todaysItems.join(', ');
 
     // console.log(specialItem);
@@ -14,8 +14,6 @@ function construct_menu(commonItems, todaysItems, specialItem, note) {
         r += `<b>Note from the HEC:</b> ${note}<br>`;
     }
     r += `
-    <b>Common Items:</b> ${commonItemsString}
-    <br>
     <b>Today's Menu:</b> ${todaysItemsString}
     `;
     if (specialItem) {
@@ -43,26 +41,24 @@ function addMeals(spl_items, notes) {
         //     - n  : settings for different canteens
         //     - 6:   their 1 is our 0 (in menu.js)... so to compensate that we
         //            had to add a number which is 1 less than a multiple of 7
+        commonItems = meal[7].join(', ');
+
         mahanadi = construct_menu(
-            meal[7],
             meal[(day + 1 + 6) % 7],
             get_item(spl_items, "Mahanadi", mealName),
             get_item(notes, "Mahanadi", mealName)
         );
         brahmaputra = construct_menu(
-            meal[7],
             meal[(day + 0 + 6) % 7],
             get_item(spl_items, "Brahmaputra", mealName),
             get_item(notes, "Brahmaputra", mealName)
         );
         rushikulya = construct_menu(
-            meal[7],
             meal[(day + 3 + 6) % 7],
             get_item(spl_items, "Rushikulya", mealName),
             get_item(notes, "Rushikulya", mealName)
         );
         kaveri = construct_menu(
-            meal[7],
             meal[(day + 2 + 6) % 7],
             get_item(spl_items, "Kaveri", mealName),
             get_item(notes, "Kaveri", mealName)
@@ -72,6 +68,10 @@ function addMeals(spl_items, notes) {
 
         element.innerHTML = `
         <div class="meal">${mealName.charAt(0).toUpperCase()}${mealName.slice(1)}</div>
+        <div class="canteen-card">
+            <span class="canteen-name">Common Items</span><br>
+            <span class="menu">${commonItems}</span>
+        </div>
         <div class="canteen-card">
             <span class="canteen-name">Mahanadi</span><br>
             <span class="menu">${mahanadi}</span>

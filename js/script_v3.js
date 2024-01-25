@@ -18,7 +18,7 @@ function construct_menu(todaysItems, specialItem, note , timestamp) {
     `;
     if (specialItem) {
         r += `<br><br><u><b>Special Items:</b></u>`
-        r += `<br>Last updated: ${timestamp}`;
+        r += `<br>Last updated: ${BeautifyDate(timestamp)}`;
         r += `<br> ${specialItem}`;
     }
     return r;
@@ -143,6 +143,13 @@ function isEmailValid(email) {
         (email === "kshitij.rathore@niser.ac.in")
     );
 }
+
+function BeautifyDate(dateString){
+    const inputDate = new Date(dateString);
+    const currentDate = new Date();
+    return inputDate.toLocaleString('en-in', {day: '2-digit', month: '2-digit', hour: 'numeric', minute: 'numeric', hour12: true });
+}
+
 
 // takes input a line from the csv file and returns an array of the values
 // remember to not put the whole csv file in this function, put only one line at a time

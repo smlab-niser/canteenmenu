@@ -17,8 +17,7 @@ function construct_menu(todaysItems, specialItem, note) {
     <b>Today's Menu:</b> ${todaysItemsString}
     `;
     if (specialItem) {
-        r += `<br><br><b>Special Items:</b>`
-        r += `<br> ${specialItem}`;
+        r += `<b>Special Items:</b> ${specialItem}`;
     }
     return r;
 };

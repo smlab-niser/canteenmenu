@@ -429,6 +429,18 @@ section {
   border-radius: 9px;
 }
 
+.common-card {
+  display: inline-block;
+  width: 80vw;
+  background: var(--card-background);
+  margin: 15px 0px 0px 0px;
+  padding: 20px 10px 10px 18px;
+  text-align: left;
+  min-height: 150px;
+  border-radius: 9px;
+  background-color: rgb(50, 56, 60);
+}
+
 .card-head {
   width: 100%;
   display: -webkit-box;
@@ -477,9 +489,14 @@ section {
   display: none;
 }
 
+b {
+  color: var(--canteen-color); /* Change to the desired color */
+}
+
 /* footer */
 footer {
   color: var(--footer-color);
+  font-size: small;
   margin-bottom: 10px;
 }
 

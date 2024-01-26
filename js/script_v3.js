@@ -2,7 +2,7 @@ const d = new Date();
 let day = d.getDay();
 let hours = d.getHours();
 
-function construct_menu(todaysItems, specialItem, note , timestamp) {
+function construct_menu(todaysItems, specialItem, note) {
     // const commonItemsString = commonItems.join(', ');
     const todaysItemsString = todaysItems.join(', ');
 
@@ -17,8 +17,7 @@ function construct_menu(todaysItems, specialItem, note , timestamp) {
     <b>Today's Menu:</b> ${todaysItemsString}
     `;
     if (specialItem) {
-        r += `<br><br><u><b>Special Items:</b></u>`
-        r += `<br>Last updated: ${BeautifyDate(timestamp)}`;
+        r += `<br><br><b>Special Items:</b>`
         r += `<br> ${specialItem}`;
     }
     return r;
@@ -48,33 +47,29 @@ function addMeals(spl_items, notes) {
         mahanadi = construct_menu(
             meal[(day + 1 + 6) % 7],
             get_item(spl_items, "Mahanadi", mealName),
-            get_item(notes, "Mahanadi", mealName),
-            get_item(spl_items, "Mahanadi", "timestamp")
+            get_item(notes, "Mahanadi", mealName)
         );
         brahmaputra = construct_menu(
             meal[(day + 0 + 6) % 7],
             get_item(spl_items, "Brahmaputra", mealName),
-            get_item(notes, "Brahmaputra", mealName),
-            get_item(spl_items, "Brahmaputra", "timestamp")
+            get_item(notes, "Brahmaputra", mealName)
         );
         rushikulya = construct_menu(
             meal[(day + 3 + 6) % 7],
             get_item(spl_items, "Rushikulya", mealName),
-            get_item(notes, "Rushikulya", mealName),
-            get_item(spl_items, "Rushikulya", "timestamp")
+            get_item(notes, "Rushikulya", mealName)
         );
         kaveri = construct_menu(
             meal[(day + 2 + 6) % 7],
             get_item(spl_items, "Kaveri", mealName),
-            get_item(notes, "Kaveri", mealName),
-            get_item(spl_items, "Kaveri", "timestamp")
+            get_item(notes, "Kaveri", mealName)
         );
 
         element = document.getElementById(mealName);
 
         element.innerHTML = `
         <div class="meal">${mealName.charAt(0).toUpperCase()}${mealName.slice(1)}</div>
-        <div class="canteen-card">
+        <div class="common-card">
             <span class="canteen-name">Common Items</span><br>
             <span class="menu">${commonItems}</span>
         </div>
@@ -142,12 +137,6 @@ function isEmailValid(email) {
         (email === "satyasundar.basa@niser.ac.in") ||
         (email === "kshitij.rathore@niser.ac.in")
     );
-}
-
-function BeautifyDate(dateString){
-    const inputDate = new Date(dateString);
-    const currentDate = new Date();
-    return inputDate.toLocaleString('en-in', {day: '2-digit', month: '2-digit', hour: 'numeric', minute: 'numeric', hour12: true });
 }
 
 

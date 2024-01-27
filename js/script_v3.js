@@ -166,11 +166,8 @@ function CSVtoArray(text) {
 }
 
 function get_spl_items() {
-    // Testing data
-    spl_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSexUJ2xojF7VQQsnJi0BLOXWpIcjIzmO8F6tSpGJvGh39kiRWj6at49kldr4NUP2O_OZn7EAWG3oHs/pub?gid=1371972834&single=true&output=csv"
-    
     // Production data 
-    // spl_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAIvrI0n7Ykze7ARIWGSu4f_DcVwZEx62VKATD08uLnGD4YJ9GYM79exqGVEytKsxTn3rm9u8ERhJG/pub?gid=1270076622&single=true&output=csv"
+    spl_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAIvrI0n7Ykze7ARIWGSu4f_DcVwZEx62VKATD08uLnGD4YJ9GYM79exqGVEytKsxTn3rm9u8ERhJG/pub?gid=1270076622&single=true&output=csv"
     return fetch(spl_url)
         .then((response) => {
             if (!response.ok) {
@@ -193,7 +190,6 @@ function get_spl_items() {
                 dinner = line[5];
                 if (isDateToday(timestamp)) {
                     spl_items[hostel] = {
-                        "timestamp" :timestamp,
                         "breakfast": breakfast,
                         "lunch": lunch,
                         "snacks": snacks,
@@ -257,9 +253,9 @@ move();
 Promise.all([get_spl_items(), get_notes()])
     .then((results) => {
         let [spl_items, notes] = results;
-        console.log(spl_items);
+        // console.log(spl_items);
         // console.log(spl_items["Mahanadi"]);
-        console.log(notes);
+        // console.log(notes);
         // console.log(notes["Mahanadi"]);
         addMeals(spl_items, notes);
     })

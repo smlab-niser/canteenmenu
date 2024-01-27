@@ -17,7 +17,7 @@ function construct_menu(todaysItems, specialItem, note) {
     <b>Today's Menu:</b> ${todaysItemsString}
     `;
     if (specialItem) {
-        r += `<br><b>Special Item:</b> ${specialItem}`;
+        r += `<br><b>Special Items:</b> ${specialItem}`;
     }
     return r;
 };
@@ -68,7 +68,7 @@ function addMeals(spl_items, notes) {
 
         element.innerHTML = `
         <div class="meal">${mealName.charAt(0).toUpperCase()}${mealName.slice(1)}</div>
-        <div class="canteen-card">
+        <div class="common-card">
             <span class="canteen-name">Common Items</span><br>
             <span class="menu">${commonItems}</span>
         </div>
@@ -138,6 +138,7 @@ function isEmailValid(email) {
     );
 }
 
+
 // takes input a line from the csv file and returns an array of the values
 // remember to not put the whole csv file in this function, put only one line at a time
 function CSVtoArray(text) {
@@ -165,6 +166,7 @@ function CSVtoArray(text) {
 }
 
 function get_spl_items() {
+    // Production data 
     spl_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAIvrI0n7Ykze7ARIWGSu4f_DcVwZEx62VKATD08uLnGD4YJ9GYM79exqGVEytKsxTn3rm9u8ERhJG/pub?gid=1270076622&single=true&output=csv"
     return fetch(spl_url)
         .then((response) => {
@@ -175,18 +177,22 @@ function get_spl_items() {
         })
         .then((csvData) => {
             lines = csvData.split('\n');
-            lines.shift();  // Timestamp, Hostel, Lunch, Dinner
+            lines.shift();  // Timestamp, Hostel, Breakfast, Lunch, Snacks, Dinner
             // console.log(lines);
             spl_items = {};
             lines.forEach(line => {
                 line = CSVtoArray(line);
                 timestamp = line[0];
                 hostel = line[1];
-                lunch = line[2];
-                dinner = line[3];
+                breakfast = line[2];
+                lunch = line[3];
+                snacks = line[4];
+                dinner = line[5];
                 if (isDateToday(timestamp)) {
                     spl_items[hostel] = {
+                        "breakfast": breakfast,
                         "lunch": lunch,
+                        "snacks": snacks,
                         "dinner": dinner
                     };
                     // console.log("added");
@@ -247,9 +253,9 @@ move();
 Promise.all([get_spl_items(), get_notes()])
     .then((results) => {
         let [spl_items, notes] = results;
-        console.log(spl_items);
+        // console.log(spl_items);
         // console.log(spl_items["Mahanadi"]);
-        console.log(notes);
+        // console.log(notes);
         // console.log(notes["Mahanadi"]);
         addMeals(spl_items, notes);
     })

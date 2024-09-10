@@ -12,6 +12,7 @@ function construct_menu(specialItem, note) {
     r = ""
     if (note) {
         r += `<b>Note from the HEC:</b> ${note}<br>`;
+        return r;
     }
     if (specialItem) {
         r += `<b>Today's Menu :</b> ${specialItem}`;
@@ -62,7 +63,7 @@ function addMeals(spl_items, notes) {
 
         element = document.getElementById(mealName);
 
-        element.innerHTML = `
+        element.innerHTML = `/
         <div class="meal">${mealName.charAt(0).toUpperCase()}${mealName.slice(1)}</div>
         <div class="common-card">
             <span class="canteen-name">Common Items</span><br>
@@ -124,13 +125,8 @@ function isDateToday(dateString) {
 function isEmailValid(email) {
     return (
         (email === "code@niser.ac.in") ||  // for testing
-        (email === "soumya.das@niser.ac.in") ||  // Gymkhana Campus Secratary
-
-        // HEC members
-        (email === "subhamjyoti.nanda@niser.ac.in") ||
-        (email === "atalswathi.patra@niser.ac.in") ||
-        (email === "satyasundar.basa@niser.ac.in") ||
-        (email === "kshitij.rathore@niser.ac.in")
+        (email === "adityaprakash.dhada@niser.ac.in") ||  // Gymkhana Campus Secratary
+        (email === "studentsgymkhana@niser.ac.in")  // Gymkhana
     );
 }
 
@@ -139,7 +135,7 @@ function isEmailValid(email) {
 // remember to not put the whole csv file in this function, put only one line at a time
 function CSVtoArray(text) {
     var re_valid = /^\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*(?:,\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*)*$/;
-    var re_value = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,'"\s\\]*(?:\s+[^,'"\s\\]+)*))\s*(?:,|$)/g;
+    var re_value = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|/"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,'"\s\\]*(?:\s+[^,'"\s\\]+)*))\s*(?:,|$)/g;
     // Return NULL if input string is not well formed CSV string.
     if (!re_valid.test(text))
         return null;

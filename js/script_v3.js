@@ -63,7 +63,7 @@ function addMeals(spl_items, notes) {
 
         element = document.getElementById(mealName);
 
-        element.innerHTML = `/  
+        element.innerHTML = `
         <div class="meal">${mealName.charAt(0).toUpperCase()}${mealName.slice(1)}</div>
         <div class="common-card">
             <span class="canteen-name">Common Items</span><br>

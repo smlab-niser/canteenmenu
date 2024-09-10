@@ -2,9 +2,9 @@ const d = new Date();
 let day = d.getDay();
 let hours = d.getHours();
 
-function construct_menu(todaysItems, specialItem, note) {
+function construct_menu(specialItem, note) {
     // const commonItemsString = commonItems.join(', ');
-    const todaysItemsString = todaysItems.join(', ');
+    // const todaysItemsString = todaysItems.join(', ');
 
     // console.log(specialItem);
     // console.log(note);
@@ -13,11 +13,11 @@ function construct_menu(todaysItems, specialItem, note) {
     if (note) {
         r += `<b>Note from the HEC:</b> ${note}<br>`;
     }
-    r += `
-    <b>Today's Menu:</b> ${todaysItemsString}
-    `;
     if (specialItem) {
-        r += `<br><b>Special Items:</b> ${specialItem}`;
+        r += `<b>Today's Menu :</b> ${specialItem}`;
+    }
+    else {
+        r += `<b>Today's Menu :</b> Not Available`;
     }
     return r;
 };
@@ -44,22 +44,18 @@ function addMeals(spl_items, notes) {
         commonItems = meal[7].join(', ');
 
         mahanadi = construct_menu(
-            meal[(day + 1 + 6) % 7],
             get_item(spl_items, "Mahanadi", mealName),
             get_item(notes, "Mahanadi", mealName)
         );
         brahmaputra = construct_menu(
-            meal[(day + 0 + 6) % 7],
             get_item(spl_items, "Brahmaputra", mealName),
             get_item(notes, "Brahmaputra", mealName)
         );
         rushikulya = construct_menu(
-            meal[(day + 3 + 6) % 7],
             get_item(spl_items, "Rushikulya", mealName),
             get_item(notes, "Rushikulya", mealName)
         );
         kaveri = construct_menu(
-            meal[(day + 2 + 6) % 7],
             get_item(spl_items, "Kaveri", mealName),
             get_item(notes, "Kaveri", mealName)
         );
@@ -73,10 +69,6 @@ function addMeals(spl_items, notes) {
             <span class="menu">${commonItems}</span>
         </div>
         <div class="canteen-card">
-            <span class="canteen-name">Mahanadi</span><br>
-            <span class="menu">${mahanadi}</span>
-        </div>
-        <div class="canteen-card">
             <span class="canteen-name">Brahmaputra</span><br>
             <span class="menu">${brahmaputra}</span>
         </div>
@@ -87,6 +79,10 @@ function addMeals(spl_items, notes) {
         <div class="canteen-card">
             <span class="canteen-name">Kaveri</span><br>
             <span class="menu">${kaveri}</span>
+        </div>
+        <div class="canteen-card">
+            <span class="canteen-name">Mahanadi</span><br>
+            <span class="menu">${mahanadi}</span>
         </div>`
     }
 }

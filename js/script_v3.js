@@ -2,9 +2,9 @@ const d = new Date();
 let day = d.getDay();
 let hours = d.getHours();
 
-function construct_menu(todaysItems, specialItem, note) {
+function construct_menu(todaysItems, note) {
     // const commonItemsString = commonItems.join(', ');
-    const todaysItemsString = todaysItems.join(', ');
+    // const todaysItemsString = todaysItems.join(', ');
 
     // console.log(specialItem);
     // console.log(note);
@@ -12,12 +12,13 @@ function construct_menu(todaysItems, specialItem, note) {
     r = ""
     if (note) {
         r += `<b>Note from the HEC:</b> ${note}<br>`;
+        return r;
     }
-    r += `
-    <b>Today's Menu:</b> ${todaysItemsString}
-    `;
-    if (specialItem) {
-        r += `<br><b>Special Items:</b> ${specialItem}`;
+    if (todaysItems) {
+        r += `<b>Today's Menu :</b> ${todaysItems}`;
+    }
+    else {
+        r += `<b>Today's Menu :</b> Not Available`;
     }
     return r;
 };
@@ -29,7 +30,7 @@ function get_item(obj, key1, key2) {
     return false;
 }
 
-function addMeals(spl_items, notes) {
+function addMeals(todaysItems, notes) {
 
     for (let mealName in menu) {
         // `mealName` is the meal name ("breakfast", "lunch", etc.)
@@ -44,23 +45,19 @@ function addMeals(spl_items, notes) {
         commonItems = meal[7].join(', ');
 
         mahanadi = construct_menu(
-            meal[(day + 1 + 6) % 7],
-            get_item(spl_items, "Mahanadi", mealName),
+            get_item(todaysItems, "Mahanadi", mealName),
             get_item(notes, "Mahanadi", mealName)
         );
         brahmaputra = construct_menu(
-            meal[(day + 0 + 6) % 7],
-            get_item(spl_items, "Brahmaputra", mealName),
+            get_item(todaysItems, "Brahmaputra", mealName),
             get_item(notes, "Brahmaputra", mealName)
         );
         rushikulya = construct_menu(
-            meal[(day + 3 + 6) % 7],
-            get_item(spl_items, "Rushikulya", mealName),
+            get_item(todaysItems, "Rushikulya", mealName),
             get_item(notes, "Rushikulya", mealName)
         );
         kaveri = construct_menu(
-            meal[(day + 2 + 6) % 7],
-            get_item(spl_items, "Kaveri", mealName),
+            get_item(todaysItems, "Kaveri", mealName),
             get_item(notes, "Kaveri", mealName)
         );
 
@@ -73,10 +70,6 @@ function addMeals(spl_items, notes) {
             <span class="menu">${commonItems}</span>
         </div>
         <div class="canteen-card">
-            <span class="canteen-name">Mahanadi</span><br>
-            <span class="menu">${mahanadi}</span>
-        </div>
-        <div class="canteen-card">
             <span class="canteen-name">Brahmaputra</span><br>
             <span class="menu">${brahmaputra}</span>
         </div>
@@ -87,6 +80,10 @@ function addMeals(spl_items, notes) {
         <div class="canteen-card">
             <span class="canteen-name">Kaveri</span><br>
             <span class="menu">${kaveri}</span>
+        </div>
+        <div class="canteen-card">
+            <span class="canteen-name">Mahanadi</span><br>
+            <span class="menu">${mahanadi}</span>
         </div>`
     }
 }
@@ -128,13 +125,8 @@ function isDateToday(dateString) {
 function isEmailValid(email) {
     return (
         (email === "code@niser.ac.in") ||  // for testing
-        (email === "soumya.das@niser.ac.in") ||  // Gymkhana Campus Secratary
-
-        // HEC members
-        (email === "subhamjyoti.nanda@niser.ac.in") ||
-        (email === "atalswathi.patra@niser.ac.in") ||
-        (email === "satyasundar.basa@niser.ac.in") ||
-        (email === "kshitij.rathore@niser.ac.in")
+        (email === "adityaprakash.dhada@niser.ac.in") ||  // Gymkhana Campus Secratary
+        (email === "studentsgymkhana@niser.ac.in")  // Gymkhana
     );
 }
 
@@ -165,10 +157,10 @@ function CSVtoArray(text) {
     return a;
 }
 
-function get_spl_items() {
+function get_menu() {
     // Production data 
-    spl_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAIvrI0n7Ykze7ARIWGSu4f_DcVwZEx62VKATD08uLnGD4YJ9GYM79exqGVEytKsxTn3rm9u8ERhJG/pub?gid=1270076622&single=true&output=csv"
-    return fetch(spl_url)
+    menu_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAIvrI0n7Ykze7ARIWGSu4f_DcVwZEx62VKATD08uLnGD4YJ9GYM79exqGVEytKsxTn3rm9u8ERhJG/pub?gid=1270076622&single=true&output=csv"
+    return fetch(menu_url)
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`Network response was not ok. Status: ${response.status}`);
@@ -179,7 +171,7 @@ function get_spl_items() {
             lines = csvData.split('\n');
             lines.shift();  // Timestamp, Hostel, Breakfast, Lunch, Snacks, Dinner
             // console.log(lines);
-            spl_items = {};
+            todaysItems = {};
             lines.forEach(line => {
                 line = CSVtoArray(line);
                 timestamp = line[0];
@@ -189,7 +181,7 @@ function get_spl_items() {
                 snacks = line[4];
                 dinner = line[5];
                 if (isDateToday(timestamp)) {
-                    spl_items[hostel] = {
+                    todaysItems[hostel] = {
                         "breakfast": breakfast,
                         "lunch": lunch,
                         "snacks": snacks,
@@ -199,7 +191,7 @@ function get_spl_items() {
                 }
             });
             // console.log(spl_items);
-            return spl_items;
+            return todaysItems;
         })
         .catch((error) => {
             console.error("Error:", error);
@@ -207,8 +199,8 @@ function get_spl_items() {
 }
 
 function get_notes() {
-    spl_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ5xfG2JM4qoQddDVT_6KAa-N9823amzU4uncd4y7z5xzkwP101DyGxea7MtaMLRo05TAdwauHPgYff/pub?gid=399925005&single=true&output=csv"
-    return fetch(spl_url)
+    notes_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ5xfG2JM4qoQddDVT_6KAa-N9823amzU4uncd4y7z5xzkwP101DyGxea7MtaMLRo05TAdwauHPgYff/pub?gid=399925005&single=true&output=csv"
+    return fetch(notes_url)
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`Network response was not ok. Status: ${response.status}`);
@@ -250,14 +242,14 @@ function get_notes() {
 
 addMeals();
 move();
-Promise.all([get_spl_items(), get_notes()])
+Promise.all([get_menu(), get_notes()])
     .then((results) => {
-        let [spl_items, notes] = results;
+        let [todaysItems, notes] = results;
         // console.log(spl_items);
         // console.log(spl_items["Mahanadi"]);
         // console.log(notes);
         // console.log(notes["Mahanadi"]);
-        addMeals(spl_items, notes);
+        addMeals(todaysItems, notes);
     })
     .catch((error) => {
         console.error("Error:", error);

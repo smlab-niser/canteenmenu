@@ -159,7 +159,7 @@ function CSVtoArray(text) {
 
 function get_menu() {
     // Production data 
-    menu_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAIvrI0n7Ykze7ARIWGSu4f_DcVwZEx62VKATD08uLnGD4YJ9GYM79exqGVEytKsxTn3rm9u8ERhJG/pub?gid=1270076622&single=true&output=csv"
+    menu_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAIvrI0n7Ykze7ARIWGSu4f_DcVwZEx62VKATD08uLnGD4YJ9GYM79exqGVEytKsxTn3rm9u8ERhJG/pub?gid=551154884&single=true&output=csv"
     return fetch(menu_url)
         .then((response) => {
             if (!response.ok) {

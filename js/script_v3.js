@@ -61,22 +61,22 @@ function addMeals(todaysItems, notes) {
         mahanadi = construct_menu(
             get_item(todaysItems, "Mahanadi", mealName),
             get_item(notes, "Mahanadi", mealName),
-            get_item(todaysItems, "Mahanadi", "breakfast_image")
+            get_item(todaysItems, "Mahanadi", `${mealName}_image`)
         );
         brahmaputra = construct_menu(
             get_item(todaysItems, "Brahmaputra", mealName),
             get_item(notes, "Brahmaputra", mealName),
-            get_item(todaysItems, "Brahmaputra", "breakfast_image")
+            get_item(todaysItems, "Brahmaputra", `${mealName}_image`)
         );
         rushikulya = construct_menu(
             get_item(todaysItems, "Rushikulya", mealName),
             get_item(notes, "Rushikulya", mealName),
-            get_item(todaysItems, "Rushikulya", "breakfast_image")
+            get_item(todaysItems, "Rushikulya", `${mealName}_image`)
         );
         kaveri = construct_menu(
             get_item(todaysItems, "Kaveri", mealName),
             get_item(notes, "Kaveri", mealName),
-            get_item(todaysItems, "Kaveri", "breakfast_image")
+            get_item(todaysItems, "Kaveri", `${mealName}_image`)
         );
 
         element = document.getElementById(mealName);
@@ -177,7 +177,7 @@ function CSVtoArray(text) {
 
 function get_menu() {
     // Production data 
-    menu_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR-FqNX1C6ssppoPgYxyC5HHh_LQc4ZPCThtSUvXvT0BSTStAE_7W5slcghqMe_KZUlt6QvKF5RQM3U/pub?gid=357633476&single=true&output=csv"
+    menu_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS3c7dkQFmPsGp30PQzsHVZ5j2bRIAY1bYzDr1zCMqjx5EhIUhJuj-i-19r3ab6vLH46BZDiusPFp7m/pub?gid=1546310934&single=true&output=csv"
     return fetch(menu_url)
         .then((response) => {
             if (!response.ok) {
@@ -199,13 +199,19 @@ function get_menu() {
                 snacks = line[4];
                 dinner = line[5];
                 breakfast_image = line[6];
+                lunch_image = line[7];
+                snacks_image = line[8];
+                dinner_image = line[9];
                 if (isDateToday(timestamp)) {
                     todaysItems[hostel] = {
                         "breakfast": breakfast,
                         "lunch": lunch,
                         "snacks": snacks,
                         "dinner": dinner,
-                        "breakfast_image": breakfast_image
+                        "breakfast_image": breakfast_image,
+                        "lunch_image": lunch_image,
+                        "snacks_image": snacks_image,
+                        "dinner_image": dinner_image
                     };
                     // console.log("added");
                 }

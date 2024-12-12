@@ -1,33 +1,187 @@
 const d = new Date();
-let day = d.getDay();
-let hours = d.getHours();
+const day = d.getDay();
+const hours = d.getHours();
 
-function construct_menu(todaysItems, note) {
-    // const commonItemsString = commonItems.join(', ');
-    // const todaysItemsString = todaysItems.join(', ');
+// Helper functions
+function convertDriveLink(openLink) {
+    const openLinkPattern = /https:\/\/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/;
+    const match = openLink.match(openLinkPattern);
 
-    // console.log(specialItem);
-    // console.log(note);
+    if (match && match[1]) {
+        const fileId = match[1];
+        return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+    } else {
+        throw new Error("Invalid Google Drive open link format.");
+    }
+}
 
-    r = ""
+function constructMenu(todaysItems, note, image) {
+    let result = "";
+
     if (note) {
-        r += `<b>Note from the HEC:</b> ${note}<br>`;
-        return r;
+        result += `<b>Note from the HEC:</b> ${note}<br>`;
+        return result;
+    }
+    result += "<b>Today's Menu : </b>";
+
+    if (image) {
+        image = convertDriveLink(image);
+        result += `<br><img src='${image}' alt="meal" style="width: 100%; max-width: 300px;"><br>`;
     }
     if (todaysItems) {
-        r += `<b>Today's Menu :</b> ${todaysItems}`;
+        result += `${todaysItems}`;
     }
-    else {
-        r += `<b>Today's Menu :</b> Not Available`;
+    if (!todaysItems && !image) {
+        result += "Not Available";
     }
-    return r;
-};
+        
+    return result;
+}
 
-function get_item(obj, key1, key2) {
-    if (obj && obj[key1] && obj[key1][key2] !== undefined) {
-        return obj[key1][key2];
+function getItem(obj, key1, key2) {
+    return obj?.[key1]?.[key2] !== undefined ? obj[key1][key2] : false;
+}
+
+function isDateToday(dateString) {
+    const inputDate = new Date(dateString);
+    const currentDate = new Date();
+    return (
+        inputDate.getDate() === currentDate.getDate() &&
+        inputDate.getMonth() === currentDate.getMonth() &&
+        inputDate.getFullYear() === currentDate.getFullYear()
+    );
+}
+
+function isEmailValid(email) {
+    const validEmails = [
+        "code@niser.ac.in",
+        "adityaprakash.dhada@niser.ac.in",
+        "studentsgymkhana@niser.ac.in",
+        "yuvraj.thapa@niser.ac.in",
+        "vamsikrishna.taviti@niser.ac.in"
+    ];
+    return validEmails.includes(email);
+}
+
+// move section according to time
+function moveToSection() {
+    let sectionNo;
+    if (hours < 10 || hours >= 22) {
+        sectionNo = 0;
+    } else if (hours < 14) {
+        sectionNo = 1;
+    } else if (hours < 18) {
+        sectionNo = 2;
+    } else {
+        sectionNo = 3;
     }
-    return false;
+
+    const target = document.getElementsByClassName("swipe-view")[0];
+    const scrollPosition = sectionNo * window.innerWidth;
+    target.scrollLeft = scrollPosition;
+}
+
+// Load Papa Parse library
+const script = document.createElement('script');
+script.src = "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js";
+document.head.appendChild(script);
+
+// Parse CSV data line to array
+function parseCSVToArray(text) {
+    if (!text) return [];
+
+    let result = [];
+    Papa.parse(text, {
+        header: false,
+        skipEmptyLines: true,
+        complete: function (parsedData) {
+            result = parsedData.data;
+        }
+    });
+    return result[0];
+}
+
+// Data fetching functions
+function fetchMenu() {
+    const menuUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAIvrI0n7Ykze7ARIWGSu4f_DcVwZEx62VKATD08uLnGD4YJ9GYM79exqGVEytKsxTn3rm9u8ERhJG/pub?gid=551154884&single=true&output=csv";
+
+    return fetch(menuUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Network response was not ok. Status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(csvData => {
+            const lines = csvData.split('\n');
+            lines.shift();
+            const todaysItems = {};
+
+            lines.forEach(line => {
+                const parsedLine = parseCSVToArray(line);
+                if (!parsedLine) return;
+
+                const [timestamp, hostel, breakfast, lunch, snacks, dinner, breakfastImage, lunchImage, snacksImage, dinnerImage] = parsedLine;
+
+                if (isDateToday(timestamp)) {
+                    todaysItems[hostel] = {
+                        breakfast,
+                        lunch,
+                        snacks,
+                        dinner,
+                        breakfast_image: breakfastImage,
+                        lunch_image: lunchImage,
+                        snacks_image: snacksImage,
+                        dinner_image: dinnerImage
+                    };
+                }
+            });
+
+            return todaysItems;
+        })
+        .catch(error => {
+            console.error("Error fetching menu:", error);
+        });
+}
+
+// Notes from HEC
+function fetchNotes() {
+    const notesUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ5xfG2JM4qoQddDVT_6KAa-N9823amzU4uncd4y7z5xzkwP101DyGxea7MtaMLRo05TAdwauHPgYff/pub?gid=399925005&single=true&output=csv";
+
+    return fetch(notesUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Network response was not ok. Status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(csvData => {
+            const lines = csvData.split('\n');
+            lines.shift();
+
+            const notes = {};
+
+            lines.forEach(line => {
+                const parsedLine = parseCSVToArray(line);
+                if (!parsedLine) return;
+
+                const [timestamp, email, hostel, breakfast, lunch, snacks, dinner] = parsedLine;
+
+                if (isDateToday(timestamp) && isEmailValid(email)) {
+                    notes[hostel] = {
+                        breakfast,
+                        lunch,
+                        snacks,
+                        dinner
+                    };
+                }
+            });
+
+            return notes;
+        })
+        .catch(error => {
+            console.error("Error fetching notes:", error);
+        });
 }
 
 function addMeals(todaysItems, notes) {
@@ -35,30 +189,27 @@ function addMeals(todaysItems, notes) {
     for (let mealName in menu) {
         // `mealName` is the meal name ("breakfast", "lunch", etc.)
         let meal = menu[mealName];
+        commonItems = meal[7].join(', '); // Common items for all canteens
 
-        // `meal[7]` is the default items
-        // what does each element of (day + n + 6)%7 represent?
-        //     - day: current day of the week (0-6)
-        //     - n  : settings for different canteens
-        //     - 6:   their 1 is our 0 (in menu.js)... so to compensate that we
-        //            had to add a number which is 1 less than a multiple of 7
-        commonItems = meal[7].join(', ');
-
-        mahanadi = construct_menu(
-            get_item(todaysItems, "Mahanadi", mealName),
-            get_item(notes, "Mahanadi", mealName)
+        mahanadi = constructMenu(
+            getItem(todaysItems, "Mahanadi", mealName),
+            getItem(notes, "Mahanadi", mealName),
+            getItem(todaysItems, "Mahanadi", `${mealName}_image`)
         );
-        brahmaputra = construct_menu(
-            get_item(todaysItems, "Brahmaputra", mealName),
-            get_item(notes, "Brahmaputra", mealName)
+        brahmaputra = constructMenu(
+            getItem(todaysItems, "Brahmaputra", mealName),
+            getItem(notes, "Brahmaputra", mealName),
+            getItem(todaysItems, "Brahmaputra", `${mealName}_image`)
         );
-        rushikulya = construct_menu(
-            get_item(todaysItems, "Rushikulya", mealName),
-            get_item(notes, "Rushikulya", mealName)
+        rushikulya = constructMenu(
+            getItem(todaysItems, "Rushikulya", mealName),
+            getItem(notes, "Rushikulya", mealName),
+            getItem(todaysItems, "Rushikulya", `${mealName}_image`)
         );
-        kaveri = construct_menu(
-            get_item(todaysItems, "Kaveri", mealName),
-            get_item(notes, "Kaveri", mealName)
+        kaveri = constructMenu(
+            getItem(todaysItems, "Kaveri", mealName),
+            getItem(notes, "Kaveri", mealName),
+            getItem(todaysItems, "Kaveri", `${mealName}_image`)
         );
 
         element = document.getElementById(mealName);
@@ -88,170 +239,15 @@ function addMeals(todaysItems, notes) {
     }
 }
 
-//moving to section according to time
-function move() {
-    if (hours < 10 || hours >= 22) {
-        var section_no = 0;
-    }
-    else if (hours < 14) {
-        var section_no = 1;
-    }
-    else if (hours < 18) {
-        var section_no = 2;
-    }
-    else {
-        var section_no = 3;
-    }
+// Initialize application
+document.addEventListener("DOMContentLoaded", () => {
+    moveToSection();
 
-    var target = document.getElementsByClassName("swipe-view")[0];
-    const scrollPosition = section_no * window.innerWidth;
-    target.scrollLeft = scrollPosition;
-}
-
-// function to check if the date is today,
-// supports the date string in google sheet TimeStamp format
-function isDateToday(dateString) {
-    const inputDate = new Date(dateString);
-    const currentDate = new Date();
-
-    return (
-        inputDate.getDate() === currentDate.getDate() &&
-        inputDate.getMonth() === currentDate.getMonth() &&
-        inputDate.getFullYear() === currentDate.getFullYear()
-    );
-}
-
-// function to check if the email is valid
-function isEmailValid(email) {
-    return (
-        (email === "code@niser.ac.in") ||  // for testing
-        (email === "adityaprakash.dhada@niser.ac.in") ||  // Gymkhana Campus Secratary
-        (email === "studentsgymkhana@niser.ac.in")  // Gymkhana
-    );
-}
-
-
-// takes input a line from the csv file and returns an array of the values
-// remember to not put the whole csv file in this function, put only one line at a time
-function CSVtoArray(text) {
-    var re_valid = /^\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*(?:,\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*)*$/;
-    var re_value = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,'"\s\\]*(?:\s+[^,'"\s\\]+)*))\s*(?:,|$)/g;
-    // Return NULL if input string is not well formed CSV string.
-    if (!re_valid.test(text))
-        return null;
-    var a = []; // Initialize array to receive values.
-    text.replace(re_value, function (m0, m1, m2, m3) {
-        // Remove backslash from \' in single quoted values.
-        if (m1 !== undefined)
-            a.push(m1.replace(/\\'/g, "'"));
-        // Remove backslash from \" in double quoted values.
-        else if (m2 !== undefined)
-            a.push(m2.replace(/\\"/g, '"'));
-        else if (m3 !== undefined)
-            a.push(m3);
-        return ""; // Return empty string.
-    });
-    // Handle special case of empty last value.
-    if (/,\s*$/.test(text))
-        a.push("");
-    return a;
-}
-
-function get_menu() {
-    // Production data 
-    menu_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAIvrI0n7Ykze7ARIWGSu4f_DcVwZEx62VKATD08uLnGD4YJ9GYM79exqGVEytKsxTn3rm9u8ERhJG/pub?gid=551154884&single=true&output=csv"
-    return fetch(menu_url)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok. Status: ${response.status}`);
-            }
-            return response.text();
+    Promise.all([fetchMenu(), fetchNotes()])
+        .then(([todaysItems, notes]) => {
+            addMeals(todaysItems, notes);
         })
-        .then((csvData) => {
-            lines = csvData.split('\n');
-            lines.shift();  // Timestamp, Hostel, Breakfast, Lunch, Snacks, Dinner
-            // console.log(lines);
-            todaysItems = {};
-            lines.forEach(line => {
-                line = CSVtoArray(line);
-                timestamp = line[0];
-                hostel = line[1];
-                breakfast = line[2];
-                lunch = line[3];
-                snacks = line[4];
-                dinner = line[5];
-                if (isDateToday(timestamp)) {
-                    todaysItems[hostel] = {
-                        "breakfast": breakfast,
-                        "lunch": lunch,
-                        "snacks": snacks,
-                        "dinner": dinner
-                    };
-                    // console.log("added");
-                }
-            });
-            // console.log(spl_items);
-            return todaysItems;
-        })
-        .catch((error) => {
-            console.error("Error:", error);
+        .catch(error => {
+            console.error("Error initializing application:", error);
         });
-}
-
-function get_notes() {
-    notes_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ5xfG2JM4qoQddDVT_6KAa-N9823amzU4uncd4y7z5xzkwP101DyGxea7MtaMLRo05TAdwauHPgYff/pub?gid=399925005&single=true&output=csv"
-    return fetch(notes_url)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok. Status: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then((csvData) => {
-            lines = csvData.split('\n');
-            // console.log(lines);
-            lines.shift();  // Timestamp, Email, Canteen, Breakfast, Lunch, Snacks, Dinner
-            // console.log(lines);
-            notes = {};
-            lines.forEach(line => {
-                line = CSVtoArray(line);
-                timestamp = line[0];
-                email = line[1];
-                hostel = line[2];
-                breakfast = line[3];
-                lunch = line[4];
-                snacks = line[5];
-                dinner = line[6];
-                if (isDateToday(timestamp) && isEmailValid(email)) {
-                    notes[hostel] = {
-                        "breakfast": breakfast,
-                        "lunch": lunch,
-                        "snacks": snacks,
-                        "dinner": dinner
-                    };
-                    // console.log("added");
-                }
-            });
-            // console.log(notes);
-            return notes;
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
-}
-
-addMeals();
-move();
-Promise.all([get_menu(), get_notes()])
-    .then((results) => {
-        let [todaysItems, notes] = results;
-        // console.log(spl_items);
-        // console.log(spl_items["Mahanadi"]);
-        // console.log(notes);
-        // console.log(notes["Mahanadi"]);
-        addMeals(todaysItems, notes);
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    });
-
+});

@@ -2,17 +2,15 @@ const d = new Date();
 let day = d.getDay();
 let hours = d.getHours();
 
-function construct_menu(todaysItems, note) {
-    // const commonItemsString = commonItems.join(', ');
-    // const todaysItemsString = todaysItems.join(', ');
-
-    // console.log(specialItem);
-    // console.log(note);
-
+function construct_menu(todaysItems, note, image) {
     r = ""
     if (note) {
         r += `<b>Note from the HEC:</b> ${note}<br>`;
         return r;
+    }
+    if (image) {
+        image = convertDriveLink(image)
+        r += `<br><img src='${image}' alt="breakfast" style="width: 100%; max-width: 300px;"> <br>`;
     }
     if (todaysItems) {
         r += `<b>Today's Menu :</b> ${todaysItems}`;
@@ -30,6 +28,22 @@ function get_item(obj, key1, key2) {
     return false;
 }
 
+function convertDriveLink(openLink) {
+    console.log(openLink)
+    // Check if the input link matches the expected format
+    const openLinkPattern = /https:\/\/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/;
+    const match = openLink.match(openLinkPattern);
+
+    if (match && match[1]) {
+        const fileId = match[1];
+        // Return the thumbnail format link
+        return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+    } else {
+        throw new Error("Invalid Google Drive open link format.");
+    }
+}
+
+
 function addMeals(todaysItems, notes) {
 
     for (let mealName in menu) {
@@ -46,19 +60,23 @@ function addMeals(todaysItems, notes) {
 
         mahanadi = construct_menu(
             get_item(todaysItems, "Mahanadi", mealName),
-            get_item(notes, "Mahanadi", mealName)
+            get_item(notes, "Mahanadi", mealName),
+            get_item(todaysItems, "Mahanadi", "breakfast_image")
         );
         brahmaputra = construct_menu(
             get_item(todaysItems, "Brahmaputra", mealName),
-            get_item(notes, "Brahmaputra", mealName)
+            get_item(notes, "Brahmaputra", mealName),
+            get_item(todaysItems, "Brahmaputra", "breakfast_image")
         );
         rushikulya = construct_menu(
             get_item(todaysItems, "Rushikulya", mealName),
-            get_item(notes, "Rushikulya", mealName)
+            get_item(notes, "Rushikulya", mealName),
+            get_item(todaysItems, "Rushikulya", "breakfast_image")
         );
         kaveri = construct_menu(
             get_item(todaysItems, "Kaveri", mealName),
-            get_item(notes, "Kaveri", mealName)
+            get_item(notes, "Kaveri", mealName),
+            get_item(todaysItems, "Kaveri", "breakfast_image")
         );
 
         element = document.getElementById(mealName);
@@ -159,7 +177,7 @@ function CSVtoArray(text) {
 
 function get_menu() {
     // Production data 
-    menu_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRAIvrI0n7Ykze7ARIWGSu4f_DcVwZEx62VKATD08uLnGD4YJ9GYM79exqGVEytKsxTn3rm9u8ERhJG/pub?gid=551154884&single=true&output=csv"
+    menu_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR-FqNX1C6ssppoPgYxyC5HHh_LQc4ZPCThtSUvXvT0BSTStAE_7W5slcghqMe_KZUlt6QvKF5RQM3U/pub?gid=357633476&single=true&output=csv"
     return fetch(menu_url)
         .then((response) => {
             if (!response.ok) {
@@ -180,17 +198,19 @@ function get_menu() {
                 lunch = line[3];
                 snacks = line[4];
                 dinner = line[5];
+                breakfast_image = line[6];
                 if (isDateToday(timestamp)) {
                     todaysItems[hostel] = {
                         "breakfast": breakfast,
                         "lunch": lunch,
                         "snacks": snacks,
-                        "dinner": dinner
+                        "dinner": dinner,
+                        "breakfast_image": breakfast_image
                     };
                     // console.log("added");
                 }
             });
-            // console.log(spl_items);
+            // console.log(todaysItems);
             return todaysItems;
         })
         .catch((error) => {
@@ -254,4 +274,3 @@ Promise.all([get_menu(), get_notes()])
     .catch((error) => {
         console.error("Error:", error);
     });
-

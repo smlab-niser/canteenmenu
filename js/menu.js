@@ -12,5 +12,8 @@ let menu = {
     },
     "dinner": {
         7: ["Roti", "Rice", "Dal (Arahar/ Moong/ Musoor, etc)", "Salad", "Paneer Curry", "Egg Curry", "Fish Curry", "Chicken Curry", "Papad", "Achar", "Ghee"]        
+    },
+    "night_canteen" : {
+        7: [""]
     }
-}
+ }

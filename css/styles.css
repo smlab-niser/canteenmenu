@@ -387,7 +387,7 @@ header {
 /* the swipe view thingy*/
 .swipe-view {
   display: grid;
-  grid-template-columns: repeat(4, 100%);
+  grid-template-columns: repeat(5, 100%);
   will-change: transform;
   -ms-flex-line-pack: center;
   align-content: center;

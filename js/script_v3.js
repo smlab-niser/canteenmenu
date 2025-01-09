@@ -66,14 +66,16 @@ function isEmailValid(email) {
 // move section according to time
 function moveToSection() {
     let sectionNo;
-    if (hours < 10 || hours >= 22) {
+    if (hours >= 6 && hours < 10) {
         sectionNo = 0;
-    } else if (hours < 14) {
+    } else if (hours >= 10 && hours < 14) {
         sectionNo = 1;
-    } else if (hours < 18) {
+    } else if (hours >= 14 && hours < 19) {
         sectionNo = 2;
-    } else {
+    } else if (hours >= 19 && hours < 22) {
         sectionNo = 3;
+    } else {
+        sectionNo = 4;
     }
 
     const target = document.getElementsByClassName("swipe-view")[0];
@@ -121,22 +123,22 @@ function fetchMenu() {
                 const parsedLine = parseCSVToArray(line);
                 if (!parsedLine) return;
 
-                const [timestamp, hostel, breakfast, lunch, snacks, dinner, breakfastImage, lunchImage, snacksImage, dinnerImage] = parsedLine;
-
+                const [timestamp, hostel, breakfast, lunch, snacks, dinner, night_canteen, breakfastImage, lunchImage, snacksImage, dinnerImage, nightCanteenImage] = parsedLine;                
                 if (isDateToday(timestamp)) {
                     todaysItems[hostel] = {
                         breakfast,
                         lunch,
                         snacks,
                         dinner,
+                        night_canteen,
                         breakfast_image: breakfastImage,
                         lunch_image: lunchImage,
                         snacks_image: snacksImage,
-                        dinner_image: dinnerImage
+                        dinner_image: dinnerImage,
+                        night_canteen_image: nightCanteenImage
                     };
                 }
             });
-
             return todaysItems;
         })
         .catch(error => {
@@ -214,12 +216,14 @@ function addMeals(todaysItems, notes) {
 
         element = document.getElementById(mealName);
 
+        const formattedMealName = mealName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         element.innerHTML = `
-        <div class="meal">${mealName.charAt(0).toUpperCase()}${mealName.slice(1)}</div>
+        <div class="meal">${formattedMealName}</div>
+        ${mealName !== "night_canteen" ? `
         <div class="common-card">
             <span class="canteen-name">Common Items</span><br>
             <span class="menu">${commonItems}</span>
-        </div>
+        </div>` : ''}
         <div class="canteen-card">
             <span class="canteen-name">Brahmaputra</span><br>
             <span class="menu">${brahmaputra}</span>
@@ -235,7 +239,7 @@ function addMeals(todaysItems, notes) {
         <div class="canteen-card">
             <span class="canteen-name">Mahanadi</span><br>
             <span class="menu">${mahanadi}</span>
-        </div>`
+        </div>`;
     }
 }
 

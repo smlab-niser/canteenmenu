@@ -190,8 +190,9 @@ function addMeals(todaysItems, notes) {
 
     for (let mealName in menu) {
         // `mealName` is the meal name ("breakfast", "lunch", etc.)
-        let meal = menu[mealName];
-        commonItems = meal[7].join(', '); // Common items for all canteens
+        
+        // let meal = menu[mealName];
+        // commonItems = meal[7].join(', '); // Common items for all canteens
 
         mahanadi = constructMenu(
             getItem(todaysItems, "Mahanadi", mealName),
@@ -217,28 +218,22 @@ function addMeals(todaysItems, notes) {
         element = document.getElementById(mealName);
 
         const formattedMealName = mealName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        // element.innerHTML = `
+        // <div class="meal">${formattedMealName}</div>
+        // ${mealName !== "night_canteen" ? `
+        // <div class="common-card">
+        //     <span class="canteen-name">Common Items</span><br>
+        //     <span class="menu">${commonItems}</span>
+        // </div>` : ''}
         element.innerHTML = `
         <div class="meal">${formattedMealName}</div>
-        ${mealName !== "night_canteen" ? `
-        <div class="common-card">
-            <span class="canteen-name">Common Items</span><br>
-            <span class="menu">${commonItems}</span>
-        </div>` : ''}
         <div class="canteen-card">
-            <span class="canteen-name">Brahmaputra</span><br>
-            <span class="menu">${brahmaputra}</span>
+            <span class="canteen-name">Mahanadi</span><br>
+            <span class="menu">${mahanadi}</span>
         </div>
         <div class="canteen-card">
             <span class="canteen-name">Rushikulya</span><br>
             <span class="menu">${rushikulya}</span>
-        </div>
-        <div class="canteen-card">
-            <span class="canteen-name">Kaveri</span><br>
-            <span class="menu">${kaveri}</span>
-        </div>
-        <div class="canteen-card">
-            <span class="canteen-name">Mahanadi</span><br>
-            <span class="menu">${mahanadi}</span>
         </div>`;
     }
 }
